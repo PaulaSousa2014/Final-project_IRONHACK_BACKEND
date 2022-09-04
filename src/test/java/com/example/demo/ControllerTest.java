@@ -58,38 +58,28 @@ public class ControllerTest {
 
     private MockMvc mockMvc;
     GsonBuilder gsonBuilder = new GsonBuilder()
-            .registerTypeAdapter(LocalDate.class,new LocalDateDeserializer())
+            .registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
             .registerTypeAdapter(LocalDate.class, new LocalDateSerializer());
     Gson gson = gsonBuilder.setPrettyPrinting().create();
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
 
-
-
     @BeforeEach
-    void setUp(){
+    void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         objectMapper.findAndRegisterModules();
         adminRepository.save(new Admin("Paula", "1234"));
-        AccountHolder accountHolder = accountHolderRepository.save(new AccountHolder("Joana","1234", null, null, LocalDate.of(1990,10, 05),new Address(),null));
-        checkingRepository.save(new Checking(BigDecimal.valueOf(100),accountHolder,null,null,null,null,null));
+        AccountHolder accountHolder = accountHolderRepository.save(new AccountHolder("Joana", "1234", null, null, LocalDate.of(1990, 10, 05), new Address(), null));
+        checkingRepository.save(new Checking(BigDecimal.valueOf(100), accountHolder, null, null, null, null, null));
 
     }
-/*
-  @AfterEach
-    void tearDown() {
-        userRepository.deleteAll();
-        accountRepository.deleteAll();
-    }
-
-*/
 
 
     @Test
-    void createAccountHolder_test()throws Exception {
+    void createAccountHolder_test() throws Exception {
 
-        UserDto accountHolder = new UserDto("Fabiola", "3456",null, null,LocalDate.now(),null,null,"");
+        UserDto accountHolder = new UserDto("Fabiola", "3456", null, null, LocalDate.now(), null, null, "");
         String body = gson.toJson(accountHolder);
         System.out.println(body);
         MvcResult mvcResult = mockMvc.perform(post("/new-accountHolder")
@@ -101,9 +91,9 @@ public class ControllerTest {
     }
 
     @Test
-    void createThirdPartUser_test()throws Exception {
+    void createThirdPartUser_test() throws Exception {
 
-        UserDto thirdPartUser = new UserDto("Fabiola", "3456",null, null,LocalDate.now(),null,null,"");
+        UserDto thirdPartUser = new UserDto("Fabiola", "3456", null, null, LocalDate.now(), null, null, "");
         String body = gson.toJson(thirdPartUser);
         System.out.println(body);
         MvcResult mvcResult = mockMvc.perform(post("/new-thirdPartUser")
@@ -115,9 +105,9 @@ public class ControllerTest {
     }
 
     @Test
-    void createAdmin_test()throws Exception {
+    void createAdmin_test() throws Exception {
 
-        UserDto admin = new UserDto("Fabiola", "3456",null, null,LocalDate.now(),null,null,"");
+        UserDto admin = new UserDto("Fabiola", "3456", null, null, LocalDate.now(), null, null, "");
         String body = gson.toJson(admin);
         System.out.println(body);
         MvcResult mvcResult = mockMvc.perform(post("/new-admin")
@@ -129,9 +119,9 @@ public class ControllerTest {
     }
 
     @Test
-    void createAccount_test()throws Exception {
+    void createAccount_test() throws Exception {
 
-        AccountDto account = new AccountDto(BigDecimal.valueOf(20000),2L,null,BigDecimal.valueOf(40),BigDecimal.valueOf(10000),BigDecimal.valueOf(0.5),LocalDate.now(),null,1234L,null,null, null);
+        AccountDto account = new AccountDto(BigDecimal.valueOf(20000), 2L, null, BigDecimal.valueOf(40), BigDecimal.valueOf(10000), BigDecimal.valueOf(0.5), LocalDate.now(), null, 1234L, null, null, null);
         String body = gson.toJson(account);
         System.out.println(body);
         MvcResult mvcResult = mockMvc.perform(post("/add-account")
@@ -142,40 +132,14 @@ public class ControllerTest {
         assertTrue(mvcResult.getResponse().getContentAsString().contains("1234"));
     }
 
-    //TODO como se hace?
-    /*
-    @Test
-    public void modifyPassword_test()throws Exception{
-        MvcResult result = mockMvc.perform(patch("/modify-password/?password=12345")).andExpect(status().isOk()).andReturn();
-        assertTrue("30000".contains(result.getResponse().getContentAsString()));
+    //TODO Falta terminar
 
-    }
-
-     */
 
     @Test
-    public void transferMoney_test() throws Exception{
+    public void transferMoney_test() throws Exception {
         MvcResult result = mockMvc.perform(post("/transfer-send/1?accountId=1?amount=2000?accountSecretKey=1234"))
                 .andExpect(status().isAccepted()).andReturn();
         assertTrue(result.getResponse().getContentAsString().isBlank());
     }
 
-    /* Como hago los de transferencia?
-    @Test
-    public void setBalance_test()throws Exception{
-     MvcResult result = mockMvc.perform(patch("/set-balance/1?balance=30000")).andExpect(status().isOk()).andReturn();
-    assertTrue("30000".contains(result.getResponse().getContentAsString()));
-
-    }
-*/
 }
-/*
-ProductDTO product = new ProductDTO("New product", 69, 1L);
-        String body = gson.toJson(product);
-        MvcResult mvcResult = mockMvc.perform(post("/new-product")
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated()).andReturn();
-
-        assertTrue(mvcResult.getResponse().getContentAsString().contains("New product"));
- */
